@@ -4,29 +4,43 @@
 # Commands
 
 **`request`**   
-TODO: description of request
+Pings the targeted user and either has them respond with $accept or $deny (not case sensitive) for the amount stated, otherwise it times out.
 ```
-!request <arg1> .. <argn>
+!request @user amount
+ 
+$accept, $deny 
 ```
 ---- 
 **`give`**  
-TODO: description of give
+Transfers the amount stated to the targeted user balance, from the author's balance
 ```
-!give <arg1> ... <argn> 
+!give @user amount 
 ```
 ---- 
 
 **`destroy`**  
-TODO: description of destroy  
+Removes the amount stated from the authors balance, permanently
 ```
-!destroy <arg1> ... <argn>
+!destroy amount
 ```
 ---- 
 
 **`rob`**  
-TODO: description of rob
+Allows the author to rob the targeted user for the state amount.
+
+Targets may only be robbed once every 24 hours.
+
+Upon successfully invoking the rob command, the targeted user is pinged and has 30 seconds to say "$run" (not case sensitive)
+
+If they do not reply within 30 seconds, there is a 50% chance the robbery will fail. If they do reply, then there is a 50-75% chance that the robbery will fail
+
+If the robbery fails, then the author loses half the amount stated, but not exceeding their current balance. This is transferred to the targeted user
+
+If the robbery succeeds, then the author gains the full amount, taking it from the targeted user's balance
 ```
-!rob <arg1> ... <argn> 
+!rob @user amount
+ 
+$run
 ```
 ---- 
 
