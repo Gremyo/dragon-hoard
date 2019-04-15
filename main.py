@@ -45,6 +45,16 @@ class DragonHoard(commands.Bot):
             self.add_user_to_database(x)
         # adds current users to database
 
+        for guild in self.guilds:
+            if "Banker" not in [x.name for x in guild.roles]:
+                await guild.create_role(name="Banker", hoist=True)
+                y = [z for z in guild.roles if z.name == "Banker"]
+                await guild.owner.add_roles(y[0])
+            if "New Banker" not in [x.name for x in guild.roles]:
+                await guild.create_role(name="New Banker", hoist=True)
+
+
+
     async def on_message(self, message):
         if message.author != self.user:  # just stops the bot from noticing its own messages
             pass  # await message.channel.send("fuck you conic")

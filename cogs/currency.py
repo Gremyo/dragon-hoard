@@ -6,6 +6,10 @@ import datetime
 import asyncio
 
 
+def is_banker(ctx):
+    role_list = [x.name for x in ctx.author.roles]
+    return "Banker" in role_list or "New Banker" in role_list
+
 class Currency(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -22,14 +26,23 @@ class Currency(commands.Cog):
             "UPDATE CURRENCY SET balance = balance + ? where UID = ?", [-amount, target])
         self.conn.commit()
 
+
     @commands.group()  # %credits
     async def credits(self, ctx):
         if ctx.invoked_subcommand is None:
             author_balance = self.check_balance(ctx.author.id)
             await ctx.send(f'You currently have {author_balance[0]} credits')
 
+    @commands.command()
+    @commands.check(is_banker)
+    async def Banker(self, ctx, targeted_user: discord.Member):
+        y = [z for z in ctx.guild.roles if z.name == "New Banker"]
+        await targeted_user.add_roles(y[0])
+        await ctx.send(f"Gave {targeted_user.mention} the New Banker role")
+
+
     @credits.command()
-    async def give(self, ctx, targeted_user: discord.Member, amount: int):  # %credits give
+    async def give(self, ctx, targeted_user: discord.Member, amount: int):  # %credits give member amount
         if ctx.author == targeted_user:
             await ctx.send("You can't give to yourself")
             return 0
