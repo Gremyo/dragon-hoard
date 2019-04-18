@@ -10,6 +10,7 @@ def is_banker(ctx):
     role_list = [x.name for x in ctx.author.roles]
     return "Banker" in role_list or "New Banker" in role_list
 
+
 class Currency(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -26,20 +27,42 @@ class Currency(commands.Cog):
             "UPDATE CURRENCY SET balance = balance + ? where UID = ?", [-amount, target])
         self.conn.commit()
 
-
     @commands.group()  # %credits
     async def credits(self, ctx):
         if ctx.invoked_subcommand is None:
             author_balance = self.check_balance(ctx.author.id)
             await ctx.send(f'You currently have {author_balance[0]} credits')
 
-    @commands.command()
+    @commands.group()
     @commands.check(is_banker)
-    async def Banker(self, ctx, targeted_user: discord.Member):
+    async def banker(self, ctx):
+        if ctx.invoked_subcommand is None:
+            if is_banker(ctx):
+                await ctx.send(f'The following commands are available: take, create, make')
+
+    @banker.command()
+    async def take(self, ctx, targeted_user: discord.Member, amount: int):
+        if amount < 0:
+            await ctx.send("Don't take negative gold")
+            return 0
+
+        self.c.execute(
+            "UPDATE CURRENCY SET balance = balance + ? where UID = ?", [-amount, targeted_user.id])
+
+    @banker.command()
+    async def create(self, ctx, targeted_user: discord.Member, amount: int):
+        if amount < 0:
+            await ctx.send("Don't create negative gold")
+            return 0
+
+        self.c.execute(
+            "UPDATE CURRENCY SET balance = balance + ? where UID = ?", [amount, targeted_user.id])
+
+    @banker.command()
+    async def make(self, ctx, targeted_user: discord.Member):
         y = [z for z in ctx.guild.roles if z.name == "New Banker"]
         await targeted_user.add_roles(y[0])
         await ctx.send(f"Gave {targeted_user.mention} the New Banker role")
-
 
     @credits.command()
     async def give(self, ctx, targeted_user: discord.Member, amount: int):  # %credits give member amount

@@ -53,11 +53,9 @@ class DragonHoard(commands.Bot):
             if "New Banker" not in [x.name for x in guild.roles]:
                 await guild.create_role(name="New Banker", hoist=True)
 
-
-
     async def on_message(self, message):
         if message.author != self.user:  # just stops the bot from noticing its own messages
-            pass  # await message.channel.send("fuck you conic")
+            pass
         await self.process_commands(message)
 
     async def on_member_join(self, member):  # adds new member to database and welcomes them
